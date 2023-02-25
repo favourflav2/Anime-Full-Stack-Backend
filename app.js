@@ -26,6 +26,9 @@ mongoose.connect(process.env.MONGO_URL).then(()=>{
 }).catch(e=>{
     console.log(e)
 })
+app.get('/',(req,res)=>{
+    res.send("hello")
+})
 
 
 app.use("/anime",animeRoutes)
