@@ -39,25 +39,29 @@ export async function sign_Up(req,res){
 export async function log_In(req,res){
     const {email,password} = req.body
 
-    const user = await User.findOne({email})
-    try{
-        if(!user){
-            return res.status(404).json({msg:"No users by that email"})
-        }else{
-            const token = jwt.sign({email:user.email, id:user._id},process.env.SECRET,{expiresIn: '2h'})
-            const isMatch = await bcrypt.compare(password,user.password)
+    
+    //console.log(user)
+      try{
+         const user = await User.findOne({email})
+         
+         if(!user){
+             return res.status(404).json({msg:"No users by that email"})
+         }else{
+             const token = jwt.sign({email:user.email, id:user._id},process.env.SECRET,{expiresIn: '2h'})
+             const isMatch = await bcrypt.compare(password,user.password)
+             console.log(isMatch)
+             if(!isMatch){
+                 return res.status(400).json({msg:"Wrong Password"})
+             }else{
+                 return res.status(200).json({user,token})
+             }
+         }
 
-            if(!isMatch){
-                return res.status(400).json({msg:"Wrong Password"})
-            }else{
-                return res.status(200).json({user,token})
-            }
-        }
-
-    }catch(e){
-        console.log(e)
-        res.status(400).json({msg:e.message})
-    }
+    
+     }catch(e){
+         console.log(e)
+         res.status(400).json({msg:e.message})
+     }
 }
 
 export async function googleSign_Up(req,res){
@@ -69,11 +73,12 @@ export async function googleSign_Up(req,res){
         // If theres already a google user in database when we sign in/up we just find that email and update
         if(oldUser){
             
-            //const user = {_id:oldUser._id.toString(),email,username,googleId:token}
-            //const updatedOldUser = 
-            let user = oldUser
-            
-             return res.status(200).json({user,token})
+            if(oldUser.googleId){
+                const user = oldUser
+                return res.status(200).json({token,user}) 
+            }else{
+                return res.status(404).json({msg:"Email is already being used"})
+            }
         }
 
         const user = await new User({email,username,googleId:token})
