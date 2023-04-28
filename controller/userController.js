@@ -27,8 +27,11 @@ export async function sign_Up(req,res){
         
         await user.save()
        
-
-        res.status(200).json({token,user})
+        if(user){
+            const {password,...otherData} = user._doc
+            res.status(200).json({token,user:otherData})
+        }
+        
 
     }catch(e){
         console.log(e)
@@ -49,11 +52,12 @@ export async function log_In(req,res){
          }else{
              const token = jwt.sign({email:user.email, id:user._id},process.env.SECRET,{expiresIn: '2h'})
              const isMatch = await bcrypt.compare(password,user.password)
-             console.log(isMatch)
+             //console.log(isMatch)
              if(!isMatch){
                  return res.status(400).json({msg:"Wrong Password"})
              }else{
-                 return res.status(200).json({user,token})
+                 const {password,...otherData} = user._doc
+                 return res.status(200).json({user:otherData,token})
              }
          }
 
