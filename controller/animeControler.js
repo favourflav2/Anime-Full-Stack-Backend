@@ -18,8 +18,21 @@ export async function printSearch(req, res) {
     if (title == p) {
       const client = new Jikan.Client();
       const result = await client.anime.search("Shingeki no Kyojin");
+      let newResult2 = result.map(item => {
+        return {
+        id:item.id,
+        score:item.score,
+        title:item.title,
+        url:item.url,
+        image:item.image,
+        genres: item.genres,
+        episodes: item.episodes,
+        synopsis: item.synopsis,
+        trailer: item.trailer? item.trailer : null
+        }
+      })
       const total = result.length;
-      const resultData = result;
+      const resultData = newResult2;
       const newResult = {
         data: resultData,
         currentPage: Number(page),
@@ -31,8 +44,21 @@ export async function printSearch(req, res) {
     } else if (title == g) {
       const client = new Jikan.Client();
       const result = await client.anime.search("Shingeki no Kyojin");
+      let newResult2 = result.map(item => {
+        return {
+        id:item.id,
+        score:item.score,
+        title:item.title,
+        url:item.url,
+        image:item.image,
+        genres: item.genres,
+        episodes: item.episodes,
+        synopsis: item.synopsis,
+        trailer: item.trailer? item.trailer : null
+        }
+      })
       const total = result.length;
-      const resultData = result;
+      const resultData = newResult2;
       const newResult = {
         data: resultData,
         currentPage: Number(page),
@@ -44,8 +70,21 @@ export async function printSearch(req, res) {
     } else {
       const client = new Jikan.Client();
       const result = await client.anime.search(title);
+      let newResult2 = result.map(item => {
+        return {
+        id:item.id,
+        score:item.score,
+        title:item.title,
+        url:item.url,
+        image:item.image,
+        genres: item.genres,
+        episodes: item.episodes,
+        synopsis: item.synopsis,
+        trailer: item.trailer? item.trailer : null
+        }
+      })
       const total = result.length;
-      const resultData = result;
+      const resultData = newResult2;
       const newResult = {
         data: resultData,
         currentPage: Number(page),
@@ -90,8 +129,37 @@ export async function topAnimeQuery(req, res) {
     let result2 = result.slice(10);
     const total = result.length;
 
+    let newResult2 = result.map(item => {
+      return {
+      id:item.id,
+      score:item.score,
+      title:item.title,
+      url:item.url,
+      image:item.image,
+      genres: item.genres,
+      episodes: item.episodes,
+      synopsis: item.synopsis,
+      trailer: item.trailer? item.trailer : null
+      }
+    })
+    //console.log(newResult2)
+
+    // let newResult = {
+    //   id:result.id,
+    //   score:result.score,
+    //   title:result.title,
+    //   url:result.url,
+    //   image:result.image,
+    //   genres: result.genres,
+    //   episodes: result.episodes,
+    //   synopsis: result.synopsis,
+    //   trailer: result.trailer? result.trailer : null
+    // }
+
+    //console.log(result)
+
     res.status(200).json({
-      data: result,
+      data: newResult2,
       currentPage: Number(page),
       total: total,
       numberOfPages: Math.ceil(total / limit),
@@ -138,8 +206,22 @@ export async function bestAnime(req, res) {
       let arr = []
       for(const item of array){
          const data = await client.anime.get(item)
-         //console.log(data)
-         arr.push(data)
+         if(data){
+          //console.log(data.id)
+          //score
+          //title
+          //url
+          let newResult = {
+            id:data.id,
+            score:data.score,
+            title:data.title,
+            url:data.url,
+            image:data.image
+          }
+          //console.log(newResult)
+          arr.push(newResult)
+         }
+         
       }
       //const data = await client.anime.get(id)
       
